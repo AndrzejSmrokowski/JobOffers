@@ -1,8 +1,6 @@
 package com.junioroffers.domain.offer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class InMemoryOfferRepository implements OfferRepository {
 
@@ -25,5 +23,10 @@ public class InMemoryOfferRepository implements OfferRepository {
     @Override
     public Offer findById(String id) {
         return database.get(id);
+    }
+
+    @Override
+    public List<Offer> findAll() {
+        return new ArrayList<>(database.values());
     }
 }
