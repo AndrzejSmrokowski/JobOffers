@@ -10,4 +10,8 @@ public interface OfferRepository {
     Offer findById(String id);
 
     List<Offer> findAll();
+
+    boolean existsByOfferUrl(String url);
+
+    List<Offer> saveAll(List<Offer> offers);
 }

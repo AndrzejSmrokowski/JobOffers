@@ -4,11 +4,13 @@ import com.junioroffers.domain.offer.dto.OfferRequestDto;
 import com.junioroffers.domain.offer.dto.OfferResponseDto;
 import org.junit.jupiter.api.Test;
 
+import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OfferFacadeTest {
 
-    OfferFacade offerFacade = new OfferFacade(new InMemoryOfferRepository());
+    OfferFacade offerFacade = new OfferFacadeTestConfiguration().offerFacadeForTests();
 
     @Test
     void shouldFindOfferByIdWhenOfferWasSaved() {
@@ -24,5 +26,9 @@ class OfferFacadeTest {
     void shouldFetchFromJobsFromRemoteAndSaveAllOffersWhenRepositoryIsEmpty() {
         //given
         assertThat(offerFacade.findAllOffers()).isEmpty();
+        //when
+        List<OfferResponseDto> result = offerFacade.fetchAllOffersAndSaveAllIfNotExists();
+        //then
+        assertThat(result).hasSize(6);
     }
 }

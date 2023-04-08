@@ -29,4 +29,19 @@ public class InMemoryOfferRepository implements OfferRepository {
     public List<Offer> findAll() {
         return new ArrayList<>(database.values());
     }
+
+    @Override
+    public boolean existsByOfferUrl(String url) {
+        long count = database.values()
+                .stream()
+                .filter(offer -> offer.url().equals(url))
+                .count();
+        return count == 1;    }
+
+    @Override
+    public List<Offer> saveAll(List<Offer> offers) {
+        return offers.stream()
+                .map(this::save)
+                .toList();
+    }
 }

@@ -10,20 +10,29 @@ import java.util.*;
 public class OfferFacade {
 
     private final OfferRepository offerRepository;
-
+    private final OfferService offerService;
     public OfferResponseDto findOfferById(String offerId) {
         Offer offerById = offerRepository.findById(offerId);
-        return OfferMapper.mapFromOfferToOfferDto(offerById);
+        return (OfferResponseDto) OfferMapper.mapToExpected(offerById);
     }
     public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto) {
-        Offer offer = offerRepository.save(OfferMapper.mapFromOfferDtoToOffer(offerRequestDto));
-        return OfferMapper.mapFromOfferToOfferDto(offer);
+        Offer offer = offerRepository.save((Offer) OfferMapper.mapToExpected(offerRequestDto));
+        return (OfferResponseDto) OfferMapper.mapToExpected(offer);
     }
 
     public List<OfferResponseDto> findAllOffers() {
         return offerRepository.findAll()
                 .stream()
-                .map(OfferMapper::mapFromOfferToOfferDto)
+                .map(OfferMapper::mapToExpected)
+                .map(obj -> (OfferResponseDto) obj)
+                .toList();
+    }
+
+    public List<OfferResponseDto> fetchAllOffersAndSaveAllIfNotExists() {
+        return offerService.fetchAllOffersAndSaveAllIfNotExists()
+                .stream()
+                .map(OfferMapper::mapToExpected)
+                .map(offer -> (OfferResponseDto) offer)
                 .toList();
     }
 }
