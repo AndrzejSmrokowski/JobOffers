@@ -75,6 +75,10 @@ class OfferFacadeTest {
         assertThat(offerFacade.findAllOffers()).hasSize(4);
     }
 
+    //    should_throw_not_found_exception_when_offer_not_found
     @Test
+    void shouldThrowNotFoundExceptionWhenOfferNotFound() {
+        //given
+    }
 
 }
