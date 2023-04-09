@@ -32,15 +32,16 @@ class OfferFacadeTest {
         //then
         assertThat(result).hasSize(6);
     }
+
     @Test
     void shouldSaveOnly2OffersWhenRepositoryHad4AddedWithUrls() {
         //given
         OfferFacade offerFacade = new OfferFacadeTestConfiguration(
                 List.of(
-                        new JobOfferResponse("id", "id", "asds", "1"),
-                        new JobOfferResponse("assd", "id", "asds", "2"),
-                        new JobOfferResponse("asddd", "id", "asds", "3"),
-                        new JobOfferResponse("asfd", "id", "asds", "4"),
+                        new JobOfferResponse("id", "id", "200", "1"),
+                        new JobOfferResponse("12", "id", "200", "2"),
+                        new JobOfferResponse("123", "id", "200", "3"),
+                        new JobOfferResponse("1234", "id", "200`", "4"),
                         new JobOfferResponse("Junior", "Comarch", "1000", "https://someurl.pl/5"),
                         new JobOfferResponse("Mid", "Finanteq", "2000", "https://someother.pl/6")
                 )
@@ -59,4 +60,21 @@ class OfferFacadeTest {
         )).containsExactlyInAnyOrder("https://someurl.pl/5", "https://someother.pl/6");
 
     }
+
+    //should_save_4_offers_when_there_are_no_offers_in_database
+    @Test
+    void shouldSave4OffersWhenThereAreNoOffersInDatabase() {
+        //given
+        assertThat(offerFacade.findAllOffers()).isEmpty();
+        //when
+        offerFacade.saveOffer(new OfferRequestDto("name1", "position1", "100", "url"));
+        offerFacade.saveOffer(new OfferRequestDto("name2", "position2", "100", "url2"));
+        offerFacade.saveOffer(new OfferRequestDto("name3", "position3", "100", "url3"));
+        offerFacade.saveOffer(new OfferRequestDto("name4", "position4", "100", "url4"));
+        //then
+        assertThat(offerFacade.findAllOffers()).hasSize(4);
+    }
+
+    @Test
+
 }
