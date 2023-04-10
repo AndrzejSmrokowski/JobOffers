@@ -21,8 +21,8 @@ public class InMemoryOfferRepository implements OfferRepository {
     }
 
     @Override
-    public Offer findById(String id) {
-        return database.get(id);
+    public Optional<Offer> findById(String id) {
+        return Optional.ofNullable(database.get(id));
     }
 
     @Override

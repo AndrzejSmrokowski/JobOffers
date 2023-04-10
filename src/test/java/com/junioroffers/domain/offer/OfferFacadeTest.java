@@ -3,11 +3,13 @@ package com.junioroffers.domain.offer;
 import com.junioroffers.domain.offer.dto.JobOfferResponse;
 import com.junioroffers.domain.offer.dto.OfferRequestDto;
 import com.junioroffers.domain.offer.dto.OfferResponseDto;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
 class OfferFacadeTest {
 
@@ -79,6 +81,14 @@ class OfferFacadeTest {
     @Test
     void shouldThrowNotFoundExceptionWhenOfferNotFound() {
         //given
+        assertThat(offerFacade.findAllOffers()).isEmpty();
+        // when
+        Throwable thrown = catchThrowable(() -> offerFacade.findOfferById("100"));
+        // then
+        AssertionsForClassTypes.assertThat(thrown)
+                .isInstanceOf(OfferNotFoundException.class)
+                .hasMessage("Offer with id 100 not found");
+
     }
 
 }

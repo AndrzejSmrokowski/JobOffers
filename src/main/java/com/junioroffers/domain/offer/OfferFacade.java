@@ -12,8 +12,10 @@ public class OfferFacade {
     private final OfferRepository offerRepository;
     private final OfferService offerService;
     public OfferResponseDto findOfferById(String offerId) {
-        Offer offerById = offerRepository.findById(offerId);
-        return (OfferResponseDto) OfferMapper.mapToExpected(offerById);
+        return offerRepository.findById(offerId)
+                .map(OfferMapper::mapToExpected)
+                .map(obj -> (OfferResponseDto) obj)
+                .orElseThrow(() -> new OfferNotFoundException(offerId));
     }
     public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto) {
         Offer offer = offerRepository.save((Offer) OfferMapper.mapToExpected(offerRequestDto));
