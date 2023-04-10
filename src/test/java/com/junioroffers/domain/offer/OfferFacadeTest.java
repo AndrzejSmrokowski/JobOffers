@@ -91,4 +91,21 @@ class OfferFacadeTest {
 
     }
 
+    @Test
+    public void shouldThrowDuplicateKeyExceptionWhenOfferUrlExists() {
+        // given
+        OfferFacade offerFacade = new OfferFacadeTestConfiguration(List.of()).offerFacadeForTests();
+        OfferResponseDto offerResponseDto = offerFacade.saveOffer(new OfferRequestDto("id", "asds", "asdasd", "hello.pl"));
+        String savedId = offerResponseDto.id();
+        assertThat(offerFacade.findOfferById(savedId).id()).isEqualTo(savedId);
+        // when
+        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(
+                new OfferRequestDto("cx", "vc", "xcv", "hello.pl")));
+
+        // then
+        AssertionsForClassTypes.assertThat(thrown)
+                .isInstanceOf(DuplicateKeyException.class)
+                .hasMessage("Offer with offerUrl [hello.pl] already exists");
+    }
+
 }

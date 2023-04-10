@@ -18,6 +18,7 @@ public class OfferFacade {
                 .orElseThrow(() -> new OfferNotFoundException(offerId));
     }
     public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto) {
+        if (offerRepository.existsByOfferUrl(offerRequestDto.url())) throw new DuplicateKeyException(offerRequestDto.url());
         Offer offer = offerRepository.save((Offer) OfferMapper.mapToExpected(offerRequestDto));
         return (OfferResponseDto) OfferMapper.mapToExpected(offer);
     }
