@@ -20,7 +20,7 @@ public class OfferMapper {
 
     private static Offer mapFromJobOfferResponseToOffer(JobOfferResponse offer) {
         return Offer.builder()
-                .url(offer.url())
+                .offerUrl(offer.url())
                 .salary(offer.salary())
                 .position(offer.title())
                 .companyName(offer.company())
@@ -32,7 +32,7 @@ public class OfferMapper {
                 .companyName(offer.companyName())
                 .position(offer.position())
                 .salary(offer.salary())
-                .url(offer.url())
+                .url(offer.offerUrl())
                 .id(offer.id())
                 .build();
     }
@@ -42,7 +42,7 @@ public class OfferMapper {
                 .companyName(offerDto.companyName())
                 .position(offerDto.position())
                 .salary(offerDto.salary())
-                .url(offerDto.url())
+                .offerUrl(offerDto.url())
                 .build();
     }
 }

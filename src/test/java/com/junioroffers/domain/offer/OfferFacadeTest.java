@@ -69,7 +69,7 @@ class OfferFacadeTest {
         //given
         assertThat(offerFacade.findAllOffers()).isEmpty();
         //when
-        offerFacade.saveOffer(new OfferRequestDto("name1", "position1", "100", "url"));
+        offerFacade.saveOffer(new OfferRequestDto("name1", "position1", "100", "offerUrl"));
         offerFacade.saveOffer(new OfferRequestDto("name2", "position2", "100", "url2"));
         offerFacade.saveOffer(new OfferRequestDto("name3", "position3", "100", "url3"));
         offerFacade.saveOffer(new OfferRequestDto("name4", "position4", "100", "url4"));
@@ -104,7 +104,7 @@ class OfferFacadeTest {
 
         // then
         AssertionsForClassTypes.assertThat(thrown)
-                .isInstanceOf(DuplicateKeyException.class)
+                .isInstanceOf(OfferDuplicateException.class)
                 .hasMessage("Offer with offerUrl [hello.pl] already exists");
     }
 

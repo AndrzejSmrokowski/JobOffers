@@ -3,17 +3,20 @@ package com.junioroffers.features;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.junioroffers.BaseIntegrationTest;
 import com.junioroffers.SampleJobOfferResponse;
-import com.junioroffers.domain.offer.OfferFetchable;
-import com.junioroffers.domain.offer.dto.JobOfferResponse;
+import com.junioroffers.domain.offer.dto.OfferResponseDto;
+import com.junioroffers.infrastructure.offer.scheduler.HttpOffersScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class TypicalScenarioUserWantToSeeOffersIntegrationTest extends BaseIntegrationTest implements SampleJobOfferResponse {
     @Autowired
-    OfferFetchable offerHttpClient;
+    HttpOffersScheduler httpOffersScheduler;
+
     @Test
     public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() {
         //step 1: there are no offers in external HTTP server
@@ -23,8 +26,14 @@ public class TypicalScenarioUserWantToSeeOffersIntegrationTest extends BaseInteg
                         .withHeader("Content-Type", "application/json")
                         .withBody(bodyWithZeroOffersJson())));
 
-        List<JobOfferResponse> jobOfferResponses = offerHttpClient.fetchOffers();
+
         //step 2: scheduler ran 1st time and made GET to external server and system added 0 offers to database
+        // given && when
+        List<OfferResponseDto> newOffers = httpOffersScheduler.fetchAllOffersAndSaveAllIfNotExists();
+        // then
+        assertThat(newOffers).isEmpty();
+
+
         //step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
         //step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
         //step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
