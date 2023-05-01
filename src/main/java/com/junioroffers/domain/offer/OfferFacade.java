@@ -5,22 +5,24 @@ import com.junioroffers.domain.offer.dto.OfferResponseDto;
 import lombok.AllArgsConstructor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class OfferFacade {
 
     private final OfferRepository offerRepository;
     private final OfferService offerService;
-    public OfferResponseDto findOfferById(String offerId) {
-        return offerRepository.findById(offerId)
+    public OfferResponseDto findOfferById(String id) {
+        return offerRepository.findById(id)
                 .map(OfferMapper::mapToExpected)
                 .map(obj -> (OfferResponseDto) obj)
-                .orElseThrow(() -> new OfferNotFoundException(offerId));
+                .orElseThrow(() -> new OfferNotFoundException(id));
     }
-    public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto) {
-        if (offerRepository.existsByOfferUrl(offerRequestDto.url())) throw new DuplicateKeyException(offerRequestDto.url());
-        Offer offer = offerRepository.save((Offer) OfferMapper.mapToExpected(offerRequestDto));
-        return (OfferResponseDto) OfferMapper.mapToExpected(offer);
+    public OfferResponseDto saveOffer(OfferRequestDto offerDto) {
+        final Offer offer = (Offer) OfferMapper.mapToExpected(offerDto);
+        assert offer != null;
+        final Offer save = offerRepository.save(offer);
+        return (OfferResponseDto) OfferMapper.mapToExpected(save);
     }
 
     public List<OfferResponseDto> findAllOffers() {
@@ -28,7 +30,7 @@ public class OfferFacade {
                 .stream()
                 .map(OfferMapper::mapToExpected)
                 .map(obj -> (OfferResponseDto) obj)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<OfferResponseDto> fetchAllOffersAndSaveAllIfNotExists() {

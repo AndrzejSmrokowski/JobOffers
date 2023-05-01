@@ -29,6 +29,6 @@ public class OfferFacadeTestConfiguration {
     }
 
     OfferFacade offerFacadeForTests() {
-        return new OfferFacade(offerRepository, new OfferService(offerRepository, inMemoryFetcherTest));
+        return new OfferFacade(offerRepository, new OfferService(inMemoryFetcherTest, offerRepository));
     }
 }
