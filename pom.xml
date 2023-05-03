@@ -23,6 +23,8 @@
         <assertj-core.version>3.19.0</assertj-core.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.0.3</awaitility.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+        <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <dependencies>
@@ -73,11 +75,11 @@
             <version>${wiremock-jre8.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--LOMBOK-->
+        <!-- LOMBOK -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
             <scope>compile</scope>
         </dependency>
         <!--  AWAITILITY -->
@@ -86,6 +88,12 @@
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- SWAGGER http://localhost:8080/swagger-ui/index.html#/ -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${springfox-boot-starter.version}</version>
         </dependency>
     </dependencies>
 
