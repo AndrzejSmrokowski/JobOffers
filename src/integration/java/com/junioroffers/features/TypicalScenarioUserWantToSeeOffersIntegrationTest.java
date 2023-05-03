@@ -1,5 +1,6 @@
 package com.junioroffers.features;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.junioroffers.BaseIntegrationTest;
 import com.junioroffers.SampleJobOfferResponse;
@@ -8,6 +9,12 @@ import com.junioroffers.infrastructure.offer.scheduler.HttpOffersScheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 import java.util.List;
 
@@ -18,8 +25,9 @@ public class TypicalScenarioUserWantToSeeOffersIntegrationTest extends BaseInteg
     HttpOffersScheduler httpOffersScheduler;
 
     @Test
-    public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() {
+    public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() throws Exception {
         //step 1: there are no offers in external HTTP server
+        //given && when && then
         wireMockServer.stubFor(WireMock.get("/offers")
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
@@ -35,10 +43,26 @@ public class TypicalScenarioUserWantToSeeOffersIntegrationTest extends BaseInteg
 
 
         //step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
+        // given
+        // when
+        // then
+
         //step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
         //step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
         //step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
         //step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
+        // given
+        String offersUrl = "/offers";
+        // when
+        ResultActions perform = mockMvc.perform(get(offersUrl));
+        // then
+        MvcResult mvcResult = perform.andExpect(status().isOk()).andReturn();
+        String jsonWithOffers = mvcResult.getResponse().getContentAsString();
+        List<OfferResponseDto> offers = objectMapper.readValue(jsonWithOffers, new TypeReference<>() {
+        });
+        assertThat(offers).isEmpty();
+
+
         //step 8: there are 2 new offers in external HTTP server
         //step 9: scheduler ran 2nd time and made GET to external server and system added 2 new offers with ids: 1000 and 2000 to database
         //step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
