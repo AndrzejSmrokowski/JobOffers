@@ -1,4 +1,4 @@
-package com.junioroffers.infrastructure.offer.controller.errot;
+package com.junioroffers.infrastructure.offer.controller.error;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,34 +1,31 @@
 package com.junioroffers.domain.offer;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 public class InMemoryOfferRepository implements OfferRepository {
 
-    Map<String, Offer> database = new HashMap<>();
+    Map<String, Offer> database = new ConcurrentHashMap<>();
 
     @Override
-    public <S extends Offer> S save(S entity) {
-        if (database.values().stream().anyMatch(offer -> offer.offerUrl().equals(entity.offerUrl()))) {
-            throw new OfferDuplicateException(entity.offerUrl());
-        }
-        UUID id = UUID.randomUUID();
-        Offer offer = new Offer(
-                id.toString(),
-                entity.companyName(),
-                entity.position(),
-                entity.salary(),
-                entity.offerUrl()
-        );
-        database.put(id.toString(), offer);
-        return (S) offer;
+    public boolean existsByOfferUrl(String offerUrl) {
+        long count = database.values()
+                .stream()
+                .filter(offer -> offer.offerUrl().equals(offerUrl))
+                .count();
+        return count == 1;
     }
 
     @Override
@@ -42,6 +39,24 @@ public class InMemoryOfferRepository implements OfferRepository {
     }
 
     @Override
+    public <S extends Offer> S save(S entity) {
+        if (database.values().stream().anyMatch(offer -> offer.offerUrl().equals(entity.offerUrl()))) {
+            throw new DuplicateKeyException(String.format("Offer with offerUrl [%s] already exists", entity.offerUrl()));
+        }
+        UUID id = UUID.randomUUID();
+        Offer offer = new Offer(
+                id.toString(),
+                entity.companyName(),
+                entity.position(),
+                entity.salary(),
+                entity.offerUrl()
+        );
+        database.put(id.toString(), offer);
+        return (S) offer;
+    }
+
+
+    @Override
     public <S extends Offer> List<S> saveAll(Iterable<S> entities) {
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(this::save)
@@ -50,7 +65,7 @@ public class InMemoryOfferRepository implements OfferRepository {
 
     @Override
     public List<Offer> findAll() {
-        return new ArrayList<>(database.values());
+        return database.values().stream().toList();
     }
 
     @Override
@@ -142,15 +157,4 @@ public class InMemoryOfferRepository implements OfferRepository {
     public <S extends Offer, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
-
-    @Override
-    public boolean existsByOfferUrl(String url) {
-        long count = database.values()
-                .stream()
-                .filter(offer -> offer.offerUrl().equals(url))
-                .count();
-        return count == 1;
-    }
-
-
 }
