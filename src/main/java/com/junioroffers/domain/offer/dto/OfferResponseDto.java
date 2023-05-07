@@ -7,7 +7,7 @@ public record OfferResponseDto(
         String id,
         String companyName,
         String salary,
-        String url,
+        String offerUrl,
         String position
 ) {
 }
