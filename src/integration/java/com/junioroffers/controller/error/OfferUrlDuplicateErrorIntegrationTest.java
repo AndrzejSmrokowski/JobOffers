@@ -3,6 +3,7 @@ package com.junioroffers.controller.error;
 import com.junioroffers.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,6 +25,7 @@ public class OfferUrlDuplicateErrorIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     public void shouldReturn409ConflictWhenAddedSecondOfferWithSameOfferUrl() throws Exception {
         // step 1
         // given && when
